@@ -1,0 +1,18 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+
+jobs:
+  include:
+    - stage: build
+      script:
+        - docker build -t node-chrome .
+        - docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
+        - docker tag node-chrome $DOCKER_USERNAME/node-chrome:latest
+        - docker push $DOCKER_USERNAME/node-chrome:latest
+        - docker tag node-chrome $DOCKER_USERNAME/node-chrome:8
+        - docker push $DOCKER_USERNAME/node-chrome:8
